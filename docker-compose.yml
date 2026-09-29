@@ -1,0 +1,29 @@
+# ───────────────────────────────────────────────────────────
+# Secure Cloud — Docker Compose
+# Spins up PostgreSQL so you don't have to install it locally.
+#
+#   docker compose up -d
+#   cd backend && npm run db:init
+# ───────────────────────────────────────────────────────────
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: securecloud-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: securecloud
+    ports:
+      - "5432:5432"
+    volumes:
+      - securecloud_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  securecloud_pgdata:
